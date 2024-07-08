@@ -1,0 +1,77 @@
+---
+import { Image } from "astro:assets";
+import Layout from "../layouts/base.astro";
+import { wpquery } from "../utils/wp";
+
+const data = await wpquery({
+	query: `
+		query LoadProducts {
+			products {
+			    nodes {
+			      slug
+			      name
+			      shortDescription
+			      image {
+				sourceUrl
+				sizes
+			      }
+			    }
+			  }
+		}
+	`,
+});
+---
+
+<style>
+	.products {
+		display: grid;
+		grid-template-rows: 1fr 1fr 1fr;
+		grid-template-columns: 1fr 1fr 1fr;
+	}
+
+	@media only screen and (max-width: 768px) {
+	  /* For mobile phones: */
+		.products {
+			display: block;
+			width: 100%;
+		} 
+	  }
+	}
+	.product {
+		border: 0.3px solid black;
+		margin: 2em;
+	}
+
+	.product p {
+		margin-bottom: 0.5em;
+	}
+</style>
+
+<Layout>
+	<h1>Products</h1>
+	<div class="products">
+		{
+			data.products.nodes.map((product) => (
+				<article class="product">
+					<Image
+						src={product.image.sourceUrl}
+						width="200"
+						height="200"
+						alt={product.name}
+					/>
+					<h3>{product.name}</h3>
+					<p>
+						<Fragment
+							set:html={
+								product.shortDescription
+							}
+						/>
+					</p>
+					<a href={`/product/${product.slug}`}>
+						See details
+					</a>
+				</article>
+			))
+		}
+	</div>
+</Layout>

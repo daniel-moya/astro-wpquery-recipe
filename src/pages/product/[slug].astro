@@ -1,0 +1,55 @@
+---
+//@ts-nocheck
+
+import Layout from "../../layouts/base.astro";
+import { wpquery } from "../../utils/wp";
+import { Image } from "astro:assets";
+
+export async function getStaticPaths() {
+	const data = await wpquery({
+		query: `
+			query GetProducts {
+			  products {
+			    nodes {
+			      id
+			      name
+			      slug
+				shortDescription
+			      sku
+			      image {
+				sourceUrl
+				sizes
+			      }
+			    }
+			  }
+			}
+		`,
+	});
+
+	return data.products.nodes.map((product) => ({
+		params: { slug: product.slug },
+		props: { product },
+	}));
+}
+
+const { product } = Astro.props;
+---
+
+<Layout>
+	<Image
+		src={product.image.sourceUrl}
+		alt={product.name}
+		sizes={product.image.sizes}
+		width="200"
+		height="200"
+	/>
+	<h3>{product.name}</h3>
+	<Fragment set:html={product.shortDescription} />
+	<button id="add" product-id={product.sku}>Add to cart</button>
+</Layout>
+
+<script>
+	document.getElementById("add").addEventListener("click", function () {
+		alert("Added to cart");
+	});
+</script>
