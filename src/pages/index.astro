@@ -6,7 +6,7 @@ import { wpquery } from "../utils/wp";
 const data = await wpquery({
 	query: `
 		query LoadProducts {
-			products {
+			products (first: 50){
 			    nodes {
 			      slug
 			      name

@@ -9,7 +9,7 @@ export async function getStaticPaths() {
 	const data = await wpquery({
 		query: `
 			query GetProducts {
-			  products {
+			  products (first: 50){
 			    nodes {
 			      id
 			      name
@@ -31,21 +31,20 @@ export async function getStaticPaths() {
 		props: { product },
 	}));
 }
-
 const { product } = Astro.props;
 ---
 
 <Layout>
-	<Image
-		src={product.image.sourceUrl}
-		alt={product.name}
-		sizes={product.image.sizes}
-		width="200"
-		height="200"
-	/>
-	<h3>{product.name}</h3>
-	<Fragment set:html={product.shortDescription} />
-	<button id="add" product-id={product.sku}>Add to cart</button>
+	<!-- <Image -->
+	<!-- 	src={product.image.sourceUrl} -->
+	<!-- 	alt={product.name} -->
+	<!-- 	sizes={product.image.sizes} -->
+	<!-- 	width="200" -->
+	<!-- 	height="200" -->
+	<!-- /> -->
+	<!-- <h3>{product.name}</h3> -->
+	<!-- <Fragment set:html={product.shortDescription} /> -->
+	<!-- <button id="add" product-id={product.sku}>Add to cart</button> -->
 </Layout>
 
 <script>
